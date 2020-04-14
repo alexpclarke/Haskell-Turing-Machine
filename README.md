@@ -28,6 +28,8 @@ The Turing Machine was invented in 1939 by Alan Turing while a student as King's
 
 ### How does a Turing Machine work?
 
+![Image of a Turing Machine](https://d18l82el6cdm1i.cloudfront.net/uploads/dfugTjn2WC-tm_palindrome.gif)
+
 A Turing Machine is comprised of four main components: 
 1. A tape that is divided into discreet cells which can contain symbols.
 2. A head that can read and write to the tape as well as move the tape one cell to the left or right.
@@ -37,8 +39,6 @@ A Turing Machine is comprised of four main components:
 Although the tape is theoretically infinite, it will initially be set to the leftmost symol and for each step that it takes, the machine will read the tape and pass that symbol as well as the value in the state register to the instruction table. The instruction table will then then determines whether the tape should be changed, what the current state is, and if the tape needs to me moved.
 
 ## Installation
-
-![Image of a Turing Machine](https://d18l82el6cdm1i.cloudfront.net/uploads/dfugTjn2WC-tm_palindrome.gif)
 
 First of all, since this is not a compiled binary, you will need the haskell compiler in order to run this program on your machine. If you do not already have Haskell installed, you can get it here:
 
