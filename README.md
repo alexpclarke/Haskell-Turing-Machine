@@ -5,7 +5,12 @@ This program is an example of how a Turing Machine can be implemented using a pu
 ## Contents
 
 - [Background](#background)
+  - [What is a Turing Machine?](#what-is-a-turing-machine)
+  - [Where did the Turing Machine come from?](#where-did-the-turing-machine-come-from)
+  - [How does a Turing Machine work?](#how-does-a-turing-machine-work)
 - [Installation](#installation)
+- [Writing your program](#writing-your-program)
+- [Support](#support)
 
 ## Background
 
