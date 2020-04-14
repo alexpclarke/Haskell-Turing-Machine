@@ -11,6 +11,8 @@ This program is an example of how a Turing Machine can be implemented using a pu
 - [Installation](#installation)
 - [Writing your program](#writing-your-program)
 - [Support](#support)
+- [Contributors](#contributors)
+- [Liscence](#liscence)
 
 ## Background
 
@@ -87,7 +89,7 @@ $ s3 : a : s2 : _ : I
 
 If you have found a bug or are unable to get this program working, please submit to our [GitHub issues page](https://github.com/alexpclarke/Haskell-Turing-Machine/issues) with at detailed description of the problem and we will try to address is as soon as possible.
 
-## Contriutors
+## Contributors
 
 - [Alex Clarke](https://github.com/alexpclarke)
 - [Gabrielle Maxwell](https://github.com/gabiiiiiii)
