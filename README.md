@@ -36,6 +36,8 @@ Although the tape is theoretically infinite, it will initially be set to the lef
 
 ## Installation
 
+![Image of a Turing Machine](https://d18l82el6cdm1i.cloudfront.net/uploads/dfugTjn2WC-tm_palindrome.gif)
+
 First of all, since this is not a compiled binary, you will need the haskell compiler in order to run this program on your machine. If you do not already have Haskell installed, you can get it here:
 
 - [Windows](http://docs.haskellstack.org/en/stable/install_and_upgrade/#windows)
