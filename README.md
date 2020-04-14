@@ -84,3 +84,12 @@ $ s3 : a : s2 : _ : I
 ## Support
 
 If you have found a bug or are unable to get this program working, please submit to our [GitHub issues page](https://github.com/alexpclarke/Haskell-Turing-Machine/issues) with at detailed description of the problem and we will try to address is as soon as possible.
+
+## Contriutors
+
+- [Alex Clarke](https://github.com/alexpclarke)
+- [Gabrielle Maxwell](https://github.com/gabiiiiiii)
+
+## Liscence
+
+[MIT](https://github.com/alexpclarke/Haskell-Turing-Machine/blob/master/LICENSE)
