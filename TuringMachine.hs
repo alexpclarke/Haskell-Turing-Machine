@@ -23,5 +23,5 @@ checkState s (a:xa) = if (s == a) then True else checkState s xa
 
 moveTape :: Tape -> Move -> Tape
 moveTape t Idle = t
-moveTape (l, x, (r:rs)) MoveRight = Tape x:l r rs
--- moveTape ((l:ls), x, r) MoveLeft = Tape ls l x:r
+moveTape (Tape l x (r:rs)) MoveRight = Tape (x:l) r rs
+moveTape (Tape (l:ls) x r) MoveLeft = Tape ls l (x:r)
