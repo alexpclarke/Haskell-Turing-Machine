@@ -11,4 +11,5 @@ main = do
   putStrLn "by: Alex Clarke and Gabrielle Maxwell\n"
   putStrLn "Input file name:"
   fileName <- getLine
-  putStrLn $ "the input file is " ++ fileName
+  fileContents <- readFile fileName
+  putStrLn fileContents
