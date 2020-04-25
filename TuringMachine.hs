@@ -8,7 +8,7 @@ data Transition = Transition {
   move :: Move
 }
 data Tape = Tape {
-  leftSite :: [Symbol],
+  leftSide :: [Symbol],
   currentSymbol :: Symbol,
   rightSide :: [Symbol]
 } deriving (Show)
