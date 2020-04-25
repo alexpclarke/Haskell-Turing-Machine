@@ -2,16 +2,26 @@ type State = Int
 type Symbol = Int
 
 data Move = Idle | MoveLeft | MoveRight
-data Transition = Transition { start :: (State, Symbol)
-                             , end :: (State, Symbol)
-                             , move :: Move
-                             }
-data Tape = Tape [Symbol] Symbol [Symbol] deriving (Show)
-data TuringMachine = TuringMachine [Transition] State Tape
+data Transition = Transition {
+  input :: (State, Symbol),
+  output :: (State, Symbol),
+  move :: Move
+}
+data Tape = Tape {
+  leftSite :: [Symbol],
+  currentSymbol :: Symbol,
+  rightSide :: [Symbol]
+} deriving (Show)
+data TuringMachine = TuringMachine {
+  transitions :: [Transition],
+  curentState :: State,
+  tape :: Tape,
+  acceptStates ::[State]
+}
 
 -- Main
 main = do
-  putStrLn "-- Haskell Turing Machine --"
+  putStrLn "Haskell Turing Machine"
   putStrLn "by: Alex Clarke and Gabrielle Maxwell\n"
   putStrLn "Input file name:"
   fileName <- getLine
@@ -20,38 +30,46 @@ main = do
 
 -- Helper functions
 
-checkState :: State -> [State] -> Bool
-checkState s [] = False
-checkState s (a:xa) = if (s == a) then True else checkState s xa
+isAccept :: TuringMachine -> Bool
+isAccept (TuringMachine _ s _ []) = False
+isAccept (TuringMachine ts s t (a:as)) =
+  if (s == a)
+  then True
+  else isAccept (TuringMachine ts s t as)
 
 moveTape :: Tape -> Move -> Tape
 moveTape t Idle = t
 moveTape (Tape l x (r:rs)) MoveRight = Tape (x:l) r rs
 moveTape (Tape (l:ls) x r) MoveLeft = Tape ls l (x:r)
 
-step :: TuringMachine -> Maybe TuringMachine
-step (TuringMachine ts s (Tape l x r)) =
+run :: TuringMachine -> TuringMachine
+run tm =
+  if (isAccept tm)
+  then tm
+  else run (step tm)
+
+step :: TuringMachine -> TuringMachine
+step (TuringMachine ts s (Tape l x r) as) =
   let t = findTransition ts s x
-  in Just (TuringMachine ts (getTESt t) (moveTape (Tape l (getTESy t) r) (getTEM t)))
+  in TuringMachine ts (getTOSt t) (moveTape (Tape l (getTOSy t) r) (getTOM t)) as
 
 findTransition :: [Transition] -> State -> Symbol -> Transition
 -- if transition is not found, the machine fails
 findTransition (t:ts) st sy
-  | ((getTSSt t) == st && (getTSSt t) == sy) = t
+  | ((getTISt t) == st && (getTISt t) == sy) = t
   | otherwise = findTransition ts st sy
 
--- get transition start state
-getTSSt :: Transition -> State
-getTSSt (Transition (x, _) (_, _) _) = x
+getTISt :: Transition -> State
+getTISt (Transition (x, _) (_, _) _) = x
 
-getTSSy :: Transition -> Symbol
-getTSSy (Transition (_, x) (_, _) _) = x
+getTISy :: Transition -> Symbol
+getTISy (Transition (_, x) (_, _) _) = x
 
-getTESt :: Transition -> State
-getTESt (Transition (_, _) (x, _) _) = x
+getTOSt :: Transition -> State
+getTOSt (Transition (_, _) (x, _) _) = x
 
-getTESy :: Transition -> Symbol
-getTESy (Transition (_, _) (_, x) _) = x
+getTOSy :: Transition -> Symbol
+getTOSy (Transition (_, _) (_, x) _) = x
 
-getTEM :: Transition -> Move
-getTEM (Transition (_, _) (_, _) x) = x
+getTOM :: Transition -> Move
+getTOM (Transition (_, _) (_, _) x) = x
