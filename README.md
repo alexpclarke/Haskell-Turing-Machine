@@ -77,12 +77,13 @@ All together, the file should look like this:
 states: s1, s2, s3, s4, s5
 start: s1
 accept: s2, s5
-symbols: a, b, c
+alphabet: a, b, c
 tape: a, b, b, _, a, b, b, c, _, _, c, b
-$ s1 : a : s1 : _ : R
-$ s1 : b : s2 : c : R
-$ s2 : c : s4 : a : L
-$ s3 : a : s2 : _ : I
+# this is a comment
+$ (s1,  a) = (s1, _, R)
+$ (s1, b) = (s2, c, R)
+$ (s2, c) = (s4, a, L)
+$ (s3, a) = (s2, _, I)
 ```
 
 ## Support
