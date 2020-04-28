@@ -1,0 +1,31 @@
+states: i, pa, pb, pc, qa, qb, qc, r, a
+start: i
+accept: a
+alphabet: a, b, c
+tape: a, b, c, a, c, b, a
+$ (i, _) = (a, _, I)
+$ (i, a) = (pa, _, R)
+$ (i, b) = (pb, _, R)
+$ (i, c) = (pc, _, R)
+$ (pa, a) = (pa, a, R)
+$ (pa, b) = (pa, b, R)
+$ (pa, c) = (pa, c, R)
+$ (pb, a) = (pb, a, R)
+$ (pb, b) = (pb, b, R)
+$ (pb, c) = (pb, c, R)
+$ (pc, a) = (pc, a, R)
+$ (pc, b) = (pc, b, R)
+$ (pc, c) = (pc, c, R)
+$ (pa, _) = (qa, _, L)
+$ (pb, _) = (qb, _, L)
+$ (pc, _) = (qc, _, L)
+$ (qa, a) = (r, _, L)
+$ (qb, b) = (r, _, L)
+$ (qc, c) = (r, _, L)
+$ (qa, _) = (a, _, I)
+$ (qb, _) = (a, _, I)
+$ (qc, _) = (a, _, I)
+$ (r, a) = (r, a, L)
+$ (r, b) = (r, b, L)
+$ (r, c) = (r, c, L)
+$ (r, _) = (i, _, R)
