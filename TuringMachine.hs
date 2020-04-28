@@ -36,9 +36,9 @@ step (TuringMachine ts st0 (Tape l sy0 r) as) =
   let (st1, sy1, m) = findTransition ts (st0, sy0)
   in TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as
 
+-- TODO: Parser :: String -> TuringMachine
 
 -- Helper Functions
-
 isAccept :: TuringMachine -> Bool
 isAccept (TuringMachine _ st _ []) = False
 isAccept (TuringMachine ts st ta (a:as))
@@ -50,10 +50,8 @@ moveTape ta Idle = ta
 moveTape (Tape l sy (r:rs)) MoveRight = Tape (sy:l) r rs
 moveTape (Tape (l:ls) sy r) MoveLeft = Tape ls l (sy:r)
 
+-- TODO: add exception handeling for non existant transitions
 findTransition :: [Transition] -> (State, Symbol) -> (State, Symbol, Move)
 findTransition ((Transition input output):ts) s
   | input == s = output
   | otherwise = findTransition ts s
-
-getInput :: Transition -> (State, Symbol)
-getInput (Transition x _) = x
