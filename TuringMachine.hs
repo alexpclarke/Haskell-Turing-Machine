@@ -26,8 +26,6 @@ main = do
   putStrLn "Input file name:"
   fileName <- getLine
   fileContents <- readFile fileName
-  let linesOfFiles = lines fileContents
-
   putStrLn fileContents
 
 run :: TuringMachine -> TuringMachine
