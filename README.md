@@ -64,17 +64,15 @@ You will then be prompted for an input file. You may write your own or select on
 
 If you would like to write your own program for this simulated Turing Machine, you may do so by creating a text file which includes the following:
 
-1. The list of states.
-2. The starting state.
-3. The accept states.
-4. The possible symbols that will appear on the tape.
-5. The initial value of the tape, from left to right.
-6. A list of instructions for the machine to follow. (if a nonexistent transition is called, the machine will fail)
+1. The starting state.
+2. The accept states.
+3. The possible symbols that will appear on the tape.
+4. The initial value of the tape, from left to right.
+5. A list of instructions for the machine to follow. (if a nonexistent transition is called, the machine will fail)
 
 All together, the file should look like this:
 
 ```
-states: s1, s2, s3, s4, s5
 start: s1
 accept: s2, s5
 alphabet: a, b, c
