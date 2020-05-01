@@ -25,6 +25,9 @@ main = do
   putStrLn "Input file name:"
   fileName <- getLine
   fileContents <- readFile fileName
+  let fileLines = lines fileContents
+  let myTM = buildMachine fileLines
+  let myTM2 = run myTM
   putStrLn fileContents
 
 run :: TuringMachine -> TuringMachine
@@ -35,12 +38,56 @@ step (TuringMachine ts st0 (Tape l sy0 r) as) =
   let (st1, sy1, m) = findTransition ts (st0, sy0)
   in TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as
 
--- Helper Functions
-splitString :: String -> [String]
-splitString = foldr (\y acc -> if y == ',' then "":acc else (y:(head acc)):(tail acc)) [""]
+-- Reading the File
+buildMachine :: [String] -> TuringMachine
+buildMachine xs = TuringMachine [] "a" (Tape [] "a" []) []
 
-removeSpaces :: String -> String
-removeSpaces = foldr (\y acc -> if y == ' ' then acc else y:acc) ""
+getStartState :: [String] -> State
+getStartState (('s':'t':'a':'r':'t':':':x):xs) = removeVal x ' '
+getStartState (x:xs) = getStartState xs
+getStartState [] = error "Failed to find Start State"
+
+getAcceptStates :: [String] -> [State]
+getAcceptStates (('a':'c':'c':'e':'p':'t':':':x):xs) = splitBy (removeVal x ' ') ','
+getAcceptStates (x:xs) = getAcceptStates xs
+getAcceptStates [] = error "Failed to find Accept States"
+
+getTape :: [String] -> Tape
+getTape (('t':'a':'p':'e':':':x):xs) =
+  let symbols = splitBy (removeVal x ' ') ','
+  in Tape [] (head symbols) (tail symbols)
+getTape (x:xs) = getTape xs
+getTape [] = error "Failed to find Tape"
+
+getTransitions :: [String] -> [Transition]
+getTransitions (('$':x):xs) = (parseTransition x):(getTransitions xs)
+getTransitions (x:xs) = getTransitions xs
+getTransitions [] = []
+
+parseTransition :: String -> Transition
+parseTransition str =
+  let x = (splitBy (replaceVal (removeVals str ['(', ')', ' ']) '=' ',') ',')
+  in Transition ((x !! 0), (x !! 1)) ((x !! 2), (x !! 3), (charToMove (head (x !! 4))))
+
+-- Helper Functions
+charToMove :: Char -> Move
+charToMove c
+  | c == 'R' = MoveRight
+  | c == 'L' = MoveLeft
+  | otherwise = Idle
+
+splitBy :: Eq a => [a] -> a-> [[a]]
+splitBy xs c = foldr (\y acc -> if y == c then []:acc else (y:(head acc)):(tail acc)) [[]] xs
+
+removeVal :: Eq a => [a] -> a-> [a]
+removeVal xs c = foldr (\y acc -> if y == c then acc else y:acc) [] xs
+
+removeVals :: Eq a => [a] -> [a] -> [a]
+removeVals str (c:cs) = removeVal (removeVals str cs) c
+
+replaceVal :: Eq a => [a] -> a -> a -> [a]
+replaceVal (x:xs) y0 y1 = if x == y0 then y1:(replaceVal xs y0 y1) else x:(replaceVal xs y0 y1)
+replaceVal [] _ _ = []
 
 isAccept :: TuringMachine -> Bool
 isAccept (TuringMachine _ st _ []) = False
