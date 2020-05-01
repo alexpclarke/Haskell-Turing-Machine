@@ -1,6 +1,5 @@
 type State = String
 type Symbol = String
-
 data Move = Idle | MoveLeft | MoveRight
 data Status = Accept | Fail | Running
 data Transition = Transition {
@@ -36,9 +35,13 @@ step (TuringMachine ts st0 (Tape l sy0 r) as) =
   let (st1, sy1, m) = findTransition ts (st0, sy0)
   in TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as
 
--- TODO: Parser :: String -> TuringMachine
-
 -- Helper Functions
+splitString :: String -> [String]
+splitString = foldr (\y acc -> if y == ',' then "":acc else (y:(head acc)):(tail acc)) [""]
+
+removeSpaces :: String -> String
+removeSpaces = foldr (\y acc -> if y == ' ' then acc else y:acc) ""
+
 isAccept :: TuringMachine -> Bool
 isAccept (TuringMachine _ st _ []) = False
 isAccept (TuringMachine ts st ta (a:as))
