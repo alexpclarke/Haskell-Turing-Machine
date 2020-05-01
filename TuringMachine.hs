@@ -40,7 +40,7 @@ step (TuringMachine ts st0 (Tape l sy0 r) as) =
 
 -- Reading the File
 buildMachine :: [String] -> TuringMachine
-buildMachine xs = TuringMachine [] "a" (Tape [] "a" []) []
+buildMachine xs = TuringMachine (getTransitions xs) (getStartState xs) (getTape xs) (getAcceptStates xs)
 
 getStartState :: [String] -> State
 getStartState (('s':'t':'a':'r':'t':':':x):xs) = removeVal x ' '
