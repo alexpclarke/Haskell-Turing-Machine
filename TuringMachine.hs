@@ -28,7 +28,8 @@ main = do
   fileContents <- readFile fileName
   let fileLines = lines fileContents
   let myTM = buildMachine fileLines
-  loop
+  printTM myTM
+  -- loop
 
 loop = do
   putStrLn "Do you want to step, run or quit?:"
@@ -45,9 +46,9 @@ loop = do
       putStrLn "invalid choice"
       loop
 
-  let out = getTape2 myTM2
-  let out2 = outputTM out
-  putStrLn out2
+  -- let out = getTape2 myTM2
+  -- let out2 = outputTM out
+  -- putStrLn out2
 
 run :: TuringMachine -> TuringMachine
 run tm@(TuringMachine _ _ _ _ (Running)) = run (step tm)
@@ -96,15 +97,20 @@ parseTransition str =
 -- Helper Functions
 printTM :: TuringMachine -> IO()
 printTM (TuringMachine _ st t _ stat) = do
-  printTape t
-  putStrLn "state: " ++ st
-  putStrLn "status: " ++ stat
+  putStrLn (outputTM t)
+  putStrLn ("state: " ++ st)
+  putStrLn ("status: " ++ (statToString stat))
 
 charToMove :: Char -> Move
 charToMove c
   | c == 'R' = MoveRight
   | c == 'L' = MoveLeft
   | otherwise = Idle
+
+statToString :: Status -> String
+statToString (Fail) = "Fail"
+statToString (Accept) = "Accept"
+statToString _ = "Running"
 
 splitBy :: Eq a => [a] -> a-> [[a]]
 splitBy xs c = foldr (\y acc -> if y == c then []:acc else (y:(head acc)):(tail acc)) [[]] xs
@@ -132,7 +138,7 @@ findTransition ((Transition input output):ts) s
 findTransition [] s = Nothing
 
 outputTM :: Tape -> String
-outputTM tm = show ((reverse $ leftSide tm) ++ [" ["] ++ [currentSymbol tm] 
+outputTM tm = show ((reverse $ leftSide tm) ++ [" ["] ++ [currentSymbol tm]
   ++ ["] "] ++ rightSide tm ++ ["\n"])
 
 getTape2 :: TuringMachine -> Tape
