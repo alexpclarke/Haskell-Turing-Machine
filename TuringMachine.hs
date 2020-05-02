@@ -28,15 +28,29 @@ main = do
   fileContents <- readFile fileName
   let fileLines = lines fileContents
   let myTM = buildMachine fileLines
-  let myTM2 = run myTM
-  putStrLn fileContents
+  loop
+
+loop = do
+  putStrLn "Do you want to step, run or quit?:"
+  s <- getLine
+  case s of
+    ('q':'u':'i':'t':_) -> return()
+    ('r':'u':'n':_) -> do
+      putStrLn "im going to run"
+      loop
+    ('s':'t':'e':'p':_) -> do
+      putStrLn "im going to step"
+      loop
+    otherwise -> do
+      putStrLn "invalid choice"
+      loop
 
 run :: TuringMachine -> TuringMachine
 run tm@(TuringMachine _ _ _ _ (Running)) = run (step tm)
 run tm = tm
 
 step :: TuringMachine -> TuringMachine
-step tm@(TuringMachine ts st0 (Tape l sy0 r) as (Running)) =
+step (TuringMachine ts st0 (Tape l sy0 r) as (Running)) =
   case findTransition ts (st0, sy0) of
     Nothing -> TuringMachine ts st0 (Tape l sy0 r) as Fail
     Just (st1, sy1, m) -> if st1 `elem` as
@@ -76,6 +90,12 @@ parseTransition str =
   in Transition ((x !! 0), (x !! 1)) ((x !! 2), (x !! 3), (charToMove (head (x !! 4))))
 
 -- Helper Functions
+printTM :: TuringMachine -> IO()
+printTM (TuringMachine _ st t _ stat) = do
+  printTape t
+  putStrLn "state: " ++ st
+  putStrLn "status: " ++ stat
+
 charToMove :: Char -> Move
 charToMove c
   | c == 'R' = MoveRight
@@ -90,15 +110,16 @@ removeVal xs c = foldr (\y acc -> if y == c then acc else y:acc) [] xs
 
 removeVals :: Eq a => [a] -> [a] -> [a]
 removeVals str (c:cs) = removeVal (removeVals str cs) c
+removeVals str [] = str
 
 replaceVal :: Eq a => [a] -> a -> a -> [a]
 replaceVal (x:xs) y0 y1 = if x == y0 then y1:(replaceVal xs y0 y1) else x:(replaceVal xs y0 y1)
 replaceVal [] _ _ = []
 
 moveTape :: Tape -> Move -> Tape
-moveTape ta Idle = ta
 moveTape (Tape l sy (r:rs)) MoveRight = Tape (sy:l) r rs
 moveTape (Tape (l:ls) sy r) MoveLeft = Tape ls l (sy:r)
+moveTape ta _ = ta
 
 findTransition :: [Transition] -> (State, Symbol) -> Maybe (State, Symbol, Move)
 findTransition ((Transition input output):ts) s
