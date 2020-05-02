@@ -15,7 +15,8 @@ data TuringMachine = TuringMachine {
   transitions :: [Transition],
   curentState :: State,
   tape :: Tape,
-  acceptStates ::[State]
+  acceptStates ::[State],
+  status :: Status
 }
 
 -- Main
@@ -31,16 +32,21 @@ main = do
   putStrLn fileContents
 
 run :: TuringMachine -> TuringMachine
-run tm = if (isAccept tm) then tm else run (step tm)
+run tm@(TuringMachine _ _ _ _ (Running)) = run (step tm)
+run tm = tm
 
 step :: TuringMachine -> TuringMachine
-step (TuringMachine ts st0 (Tape l sy0 r) as) =
-  let (st1, sy1, m) = findTransition ts (st0, sy0)
-  in TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as
+step tm@(TuringMachine ts st0 (Tape l sy0 r) as (Running)) =
+  case findTransition ts (st0, sy0) of
+    Nothing -> TuringMachine ts st0 (Tape l sy0 r) as Fail
+    Just (st1, sy1, m) -> if st1 `elem` as
+      then TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as Accept
+      else TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as Running
+step tm = tm
 
 -- Reading the File
 buildMachine :: [String] -> TuringMachine
-buildMachine xs = TuringMachine (getTransitions xs) (getStartState xs) (getTape xs) (getAcceptStates xs)
+buildMachine xs = TuringMachine (getTransitions xs) (getStartState xs) (getTape xs) (getAcceptStates xs) Running
 
 getStartState :: [String] -> State
 getStartState (('s':'t':'a':'r':'t':':':x):xs) = removeVal x ' '
@@ -89,19 +95,13 @@ replaceVal :: Eq a => [a] -> a -> a -> [a]
 replaceVal (x:xs) y0 y1 = if x == y0 then y1:(replaceVal xs y0 y1) else x:(replaceVal xs y0 y1)
 replaceVal [] _ _ = []
 
-isAccept :: TuringMachine -> Bool
-isAccept (TuringMachine _ st _ []) = False
-isAccept (TuringMachine ts st ta (a:as))
-  | st == a = True
-  | otherwise = isAccept (TuringMachine ts st ta as)
-
 moveTape :: Tape -> Move -> Tape
 moveTape ta Idle = ta
 moveTape (Tape l sy (r:rs)) MoveRight = Tape (sy:l) r rs
 moveTape (Tape (l:ls) sy r) MoveLeft = Tape ls l (sy:r)
 
--- TODO: add exception handeling for non existant transitions
-findTransition :: [Transition] -> (State, Symbol) -> (State, Symbol, Move)
+findTransition :: [Transition] -> (State, Symbol) -> Maybe (State, Symbol, Move)
 findTransition ((Transition input output):ts) s
-  | input == s = output
+  | input == s = Just output
   | otherwise = findTransition ts s
+findTransition [] s = Nothing
