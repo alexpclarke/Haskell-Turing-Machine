@@ -31,6 +31,10 @@ main = do
   let myTM2 = run myTM
   putStrLn fileContents
 
+  let out = getTape2 myTM2
+  let out2 = outputTM out
+  putStrLn out2
+
 run :: TuringMachine -> TuringMachine
 run tm@(TuringMachine _ _ _ _ (Running)) = run (step tm)
 run tm = tm
@@ -90,6 +94,7 @@ removeVal xs c = foldr (\y acc -> if y == c then acc else y:acc) [] xs
 
 removeVals :: Eq a => [a] -> [a] -> [a]
 removeVals str (c:cs) = removeVal (removeVals str cs) c
+removeVals str [] = str
 
 replaceVal :: Eq a => [a] -> a -> a -> [a]
 replaceVal (x:xs) y0 y1 = if x == y0 then y1:(replaceVal xs y0 y1) else x:(replaceVal xs y0 y1)
@@ -99,9 +104,17 @@ moveTape :: Tape -> Move -> Tape
 moveTape ta Idle = ta
 moveTape (Tape l sy (r:rs)) MoveRight = Tape (sy:l) r rs
 moveTape (Tape (l:ls) sy r) MoveLeft = Tape ls l (sy:r)
+moveTape ta _ = ta
 
 findTransition :: [Transition] -> (State, Symbol) -> Maybe (State, Symbol, Move)
 findTransition ((Transition input output):ts) s
   | input == s = Just output
   | otherwise = findTransition ts s
 findTransition [] s = Nothing
+
+outputTM :: Tape -> String
+outputTM tm = show ((reverse $ leftSide tm) ++ [" ["] ++ [currentSymbol tm] 
+  ++ ["] "] ++ rightSide tm ++ ["\n"])
+
+getTape2 :: TuringMachine -> Tape
+getTape2 (TuringMachine _ _ t _ _) = t
