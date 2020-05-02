@@ -45,6 +45,10 @@ loop = do
       putStrLn "invalid choice"
       loop
 
+  let out = getTape2 myTM2
+  let out2 = outputTM out
+  putStrLn out2
+
 run :: TuringMachine -> TuringMachine
 run tm@(TuringMachine _ _ _ _ (Running)) = run (step tm)
 run tm = tm
@@ -126,3 +130,10 @@ findTransition ((Transition input output):ts) s
   | input == s = Just output
   | otherwise = findTransition ts s
 findTransition [] s = Nothing
+
+outputTM :: Tape -> String
+outputTM tm = show ((reverse $ leftSide tm) ++ [" ["] ++ [currentSymbol tm] 
+  ++ ["] "] ++ rightSide tm ++ ["\n"])
+
+getTape2 :: TuringMachine -> Tape
+getTape2 (TuringMachine _ _ t _ _) = t
