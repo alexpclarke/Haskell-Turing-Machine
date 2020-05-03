@@ -135,7 +135,9 @@ replaceVal [] _ _ = []
 
 moveTape :: Tape -> Move -> Tape
 moveTape (Tape l sy (r:rs)) MoveRight = Tape (sy:l) r rs
+moveTape (Tape l sy []) MoveRight = Tape (sy:l) "_" []
 moveTape (Tape (l:ls) sy r) MoveLeft = Tape ls l (sy:r)
+moveTape (Tape [] sy r) MoveLeft = Tape [] "_" (sy:r)
 moveTape ta _ = ta
 
 findTransition :: [Transition] -> (State, Symbol) -> Maybe (State, Symbol, Move)
