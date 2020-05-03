@@ -1,7 +1,5 @@
-states: i, pa, pb, pc, qa, qb, qc, r, a
 start: i
 accept: a
-alphabet: a, b, c
 tape: a, b, c, a, c, b, a
 $ (i, _) = (a, _, I)
 $ (i, a) = (pa, _, R)

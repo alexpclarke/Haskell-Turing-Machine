@@ -20,6 +20,7 @@ data TuringMachine = TuringMachine {
 }
 
 -- Main
+main :: IO()
 main = do
   putStrLn "Haskell Turing Machine"
   putStrLn "by: Alex Clarke and Gabrielle Maxwell\n"
@@ -29,26 +30,26 @@ main = do
   let fileLines = lines fileContents
   let myTM = buildMachine fileLines
   printTM myTM
-  -- loop
+  loop myTM
 
-loop = do
+loop :: TuringMachine -> IO()
+loop tm = do
+  putStrLn "-----Options-----"
   putStrLn "Do you want to step, run or quit?:"
   s <- getLine
   case s of
     ('q':'u':'i':'t':_) -> return()
     ('r':'u':'n':_) -> do
-      putStrLn "im going to run"
-      loop
+      let tempTM = run tm
+      printTM tempTM
+      loop tempTM
     ('s':'t':'e':'p':_) -> do
-      putStrLn "im going to step"
-      loop
+      let tempTM = step tm
+      printTM tempTM
+      loop tempTM
     otherwise -> do
       putStrLn "invalid choice"
-      loop
-
-  -- let out = getTape2 myTM2
-  -- let out2 = outputTM out
-  -- putStrLn out2
+      loop tm
 
 run :: TuringMachine -> TuringMachine
 run tm@(TuringMachine _ _ _ _ (Running)) = run (step tm)
@@ -94,13 +95,19 @@ parseTransition str =
   let x = (splitBy (replaceVal (removeVals str ['(', ')', ' ']) '=' ',') ',')
   in Transition ((x !! 0), (x !! 1)) ((x !! 2), (x !! 3), (charToMove (head (x !! 4))))
 
--- Helper Functions
+-- Print functions
 printTM :: TuringMachine -> IO()
 printTM (TuringMachine _ st t _ stat) = do
+  putStrLn "-----Current Machine State-----"
   putStrLn (outputTM t)
   putStrLn ("state: " ++ st)
   putStrLn ("status: " ++ (statToString stat))
 
+outputTM :: Tape -> String
+outputTM tm = show ((reverse $ leftSide tm) ++ [" ["] ++ [currentSymbol tm]
+  ++ ["] "] ++ rightSide tm ++ ["\n"])
+
+-- Helper Functions
 charToMove :: Char -> Move
 charToMove c
   | c == 'R' = MoveRight
@@ -136,10 +143,3 @@ findTransition ((Transition input output):ts) s
   | input == s = Just output
   | otherwise = findTransition ts s
 findTransition [] s = Nothing
-
-outputTM :: Tape -> String
-outputTM tm = show ((reverse $ leftSide tm) ++ [" ["] ++ [currentSymbol tm]
-  ++ ["] "] ++ rightSide tm ++ ["\n"])
-
-getTape2 :: TuringMachine -> Tape
-getTape2 (TuringMachine _ _ t _ _) = t
