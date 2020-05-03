@@ -1,6 +1,6 @@
 # Haskell Turing Machine
 
-This program is an example of how a Turing Machine can be implemented using a purely functional programming such as Haskell.
+This program is an example of how a Turing Machine can be implemented using a purely functional programming language such as Haskell.
 
 ## Contents
 
