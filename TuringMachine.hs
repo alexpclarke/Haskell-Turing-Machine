@@ -16,7 +16,8 @@ data TuringMachine = TuringMachine {
   curentState :: State,
   tape :: Tape,
   acceptStates ::[State],
-  status :: Status
+  status :: Status,
+  steps :: Int
 }
 
 -- Main
@@ -38,12 +39,12 @@ loop tm = do
   putStrLn "Do you want to step, run or quit?:"
   s <- getLine
   case s of
-    ('q':'u':'i':'t':_) -> return()
-    ('r':'u':'n':_) -> do
+    ('q':'u':'i':'t':[]) -> return()
+    ('r':'u':'n':[]) -> do
       let tempTM = run tm
       printTM tempTM
       loop tempTM
-    ('s':'t':'e':'p':_) -> do
+    ('s':'t':'e':'p':[]) -> do
       let tempTM = step tm
       printTM tempTM
       loop tempTM
@@ -52,21 +53,21 @@ loop tm = do
       loop tm
 
 run :: TuringMachine -> TuringMachine
-run tm@(TuringMachine _ _ _ _ (Running)) = run (step tm)
+run tm@(TuringMachine _ _ _ _ (Running) _) = run (step tm)
 run tm = tm
 
 step :: TuringMachine -> TuringMachine
-step (TuringMachine ts st0 (Tape l sy0 r) as (Running)) =
+step (TuringMachine ts st0 (Tape l sy0 r) as (Running) steps) =
   case findTransition ts (st0, sy0) of
-    Nothing -> TuringMachine ts st0 (Tape l sy0 r) as Fail
+    Nothing -> TuringMachine ts st0 (Tape l sy0 r) as Fail (steps + 1)
     Just (st1, sy1, m) -> if st1 `elem` as
-      then TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as Accept
-      else TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as Running
+      then TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as Accept (steps + 1)
+      else TuringMachine ts st1 (moveTape (Tape l sy1 r) m) as Running (steps + 1)
 step tm = tm
 
 -- Reading the File
 buildMachine :: [String] -> TuringMachine
-buildMachine xs = TuringMachine (getTransitions xs) (getStartState xs) (getTape xs) (getAcceptStates xs) Running
+buildMachine xs = TuringMachine (getTransitions xs) (getStartState xs) (getTape xs) (getAcceptStates xs) Running 0
 
 getStartState :: [String] -> State
 getStartState (('s':'t':'a':'r':'t':':':x):xs) = removeVal x ' '
@@ -97,10 +98,11 @@ parseTransition str =
 
 -- Print functions
 printTM :: TuringMachine -> IO()
-printTM (TuringMachine _ st t _ stat) = do
+printTM (TuringMachine _ st t _ stat steps) = do
   putStrLn "-----Current Machine State-----"
-  putStrLn (outputTM t)
-  putStrLn ("state: " ++ st)
+  putStrLn ("tape:   " ++ outputTM t)
+  putStrLn ("state:  " ++ st)
+  putStrLn ("steps:  " ++ (show steps))
   putStrLn ("status: " ++ (statToString stat))
 
 outputTM :: Tape -> String
