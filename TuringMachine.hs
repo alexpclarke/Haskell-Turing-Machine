@@ -127,20 +127,16 @@ parseTransition str =
 printTM :: TuringMachine -> IO()
 printTM (TuringMachine _ st t _ stat steps) = do
   putStrLn "-----Current Machine State-----"
-  putStrLn ("tape:   " ++ outputTM t)
+  putStrLn ("tape:   " ++ formatTM t)
   putStrLn ("state:  " ++ st)
   putStrLn ("steps:  " ++ (show steps))
   putStrLn ("status: " ++ (statToString stat))
 
--- outputTM - this function takes a Tape and formats it into a string for
--- output.
--- TODO: actually build the string instead of using show so that it doesnt have
--- the quotation marks and brackets
--- TODO: exclude leading and trailing blank symbols.
-outputTM :: Tape -> String
-outputTM tm = show ((reverse $ leftSide tm) ++ [" ["] ++ [currentSymbol tm]
-  ++ ["] "] ++ rightSide tm ++ ["\n"])
-
+-- formatTM - this function takes a Tape and formats it into a string for output.
+formatTM :: Tape -> String
+formatTM tm = show (reverse $ leftSide tm) ++ " [" ++ show [currentSymbol tm]
+  ++ "] " ++ show (rightSide tm)
+  
 -- Helper Functions
 
 -- charToMove - Casts a char to a Move.
